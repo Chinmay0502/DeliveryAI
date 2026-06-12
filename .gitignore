@@ -1,0 +1,16 @@
+# env files
+.env
+backend/.env
+frontend/.env
+model-api/.env
+
+# node
+node_modules/
+
+# python
+venv/
+__pycache__/
+
+# build folders
+dist/
+build/

@@ -1,11 +1,20 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 import pickle
+import os
 
 app = Flask(__name__)
 
-model = pickle.load(open("delivery_model.pkl", "rb"))
-columns = pickle.load(open("columns.pkl", "rb"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_PATH = os.path.join(BASE_DIR, "delivery_model.pkl")
+COLUMNS_PATH = os.path.join(BASE_DIR, "columns.pkl")
+
+with open(MODEL_PATH, "rb") as f:
+    model = pickle.load(f)
+
+with open(COLUMNS_PATH, "rb") as f:
+    columns = pickle.load(f)
 
 
 @app.route("/")
@@ -20,38 +29,41 @@ def predict():
 
     try:
 
-        data = request.json
+        data = request.get_json()
 
-        # Create all columns with default 0
         input_data = {col: 0 for col in columns}
 
-        # Numeric fields
         input_data["Order_ID"] = int(data["Order_ID"])
-        input_data["Distance_km"] = float(data["Distance_km"])
+
+        input_data["Distance_km"] = float(
+            data["Distance_km"]
+        )
+
         input_data["Preparation_Time_min"] = float(
             data["Preparation_Time_min"]
         )
+
         input_data["Courier_Experience_yrs"] = float(
             data["Courier_Experience_yrs"]
         )
 
-        # Weather
         weather = f"Weather_{data['Weather']}"
+
         if weather in input_data:
             input_data[weather] = 1
 
-        # Traffic
         traffic = f"Traffic_Level_{data['Traffic_Level']}"
+
         if traffic in input_data:
             input_data[traffic] = 1
 
-        # Time
         time = f"Time_of_Day_{data['Time_of_Day']}"
+
         if time in input_data:
             input_data[time] = 1
 
-        # Vehicle
         vehicle = f"Vehicle_Type_{data['Vehicle_Type']}"
+
         if vehicle in input_data:
             input_data[vehicle] = 1
 
@@ -68,6 +80,7 @@ def predict():
         })
 
     except Exception as e:
+
         return jsonify({
             "success": False,
             "error": str(e)
@@ -75,4 +88,10 @@ def predict():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+
+    port = int(os.environ.get("PORT", 5000))
+
+    app.run(
+        host="0.0.0.0",
+        port=port
+    )

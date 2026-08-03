@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { PredictionContext } from "../context/PredictionContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Result() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function Result() {
       try {
 
         const response = await axios.post(
-          "http://localhost:5001/api/predict",
+          `${API_URL}/api/predict`,
           {
             Order_ID: predictionData.Order_ID,
             Distance_km: Number(

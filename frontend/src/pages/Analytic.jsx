@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 import {
   BarChart,
@@ -36,7 +37,7 @@ function Analytic() {
   const fetchAnalytics = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5001/api/analytics"
+        `${API_URL}/api/analytics`
       );
 
       setData(response.data.predictions);

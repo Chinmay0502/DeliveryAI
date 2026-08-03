@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 import {
   LineChart,
@@ -40,7 +41,7 @@ function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5001/api/dashboard"
+        `${API_URL}/api/dashboard`
       );
 
       setStats(response.data);
